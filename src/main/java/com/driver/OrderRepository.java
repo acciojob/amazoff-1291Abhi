@@ -21,4 +21,12 @@ public class OrderRepository {
     public void addOrderPartnerPair(String orderId, String partnerId) {
         pairMap.put(orderId,partnerId);
     }
+
+    public Order getOrderByID(String orderId) {
+        return orderMap.get(orderId);
+    }
+
+    public DeliveryPartner getPartnerById(String partnerId) {
+        return partnerMap.get(partnerId);
+    }
 }

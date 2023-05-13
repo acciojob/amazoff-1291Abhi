@@ -19,6 +19,15 @@ public class OrderService {
     }
 
     public Order getOrderById(String orderId) {
+        return orderRepository.getOrderByID(orderId);
+    }
 
+    public DeliveryPartner getPartnerById(String partnerId) {
+        return orderRepository.getPartnerById(partnerId);
+    }
+
+    public Integer getOrderCountByPartnerId(String partnerId) {
+        DeliveryPartner partner=getPartnerById(partnerId);
+        return partner.getNumberOfOrders();
     }
 }
