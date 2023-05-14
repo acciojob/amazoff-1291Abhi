@@ -57,4 +57,24 @@ public class OrderRepository {
             key.add(keys);
         return key;
     }
+
+    public void deletePartnerByID(String partnerId) {
+        partnerMap.remove(partnerId);
+        pairMap.remove(partnerId);
+    }
+
+
+    public void deleteOrderByOrderID(String orderId,String partnerId) {
+        List<String> order=pairMap.get(partnerId);
+        List<String> newOrder=new ArrayList<>();
+        for(String or:order){
+            if(!or.equals(orderId))
+                newOrder.add(or);
+        }
+        pairMap.put(partnerId,newOrder);
+    }
+
+    public void deleteOrderByOrderID(String orderId) {
+        orderMap.remove(orderId);
+    }
 }
