@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-@NoArgsConstructor
-@AllArgsConstructor
+//@NoArgsConstructor
+//@AllArgsConstructor
 @Service
 public class OrderService {
     @Autowired
@@ -58,12 +58,12 @@ public class OrderService {
         List<String> allOrder = getAllOrders();
         int assignedOrder = orderRepository.getNoOfAssignedOrder();
         Integer count=allOrder.size()-assignedOrder;
-        return allOrder.size()-assignedOrder;
+        return count;
     }
 
     public Integer countLeftOrder(String time, String partnerId) {
         String[] temp=time.split(":");
-        int t=Integer.parseInt(temp[0])*60+Integer.parseInt(temp[1]);
+        int t=(Integer.parseInt(temp[0])*60)+Integer.parseInt(temp[1]);
         int count = 0;
         List<String> orderList = getOrdersByPartnerId(partnerId);
         for (String orderId : orderList) {
@@ -76,7 +76,7 @@ public class OrderService {
 
     public String getLastDeliveryTime(String partnerId) {
         List<String> orderList = getOrdersByPartnerId(partnerId);
-        int maxTime = Integer.MIN_VALUE;
+        int maxTime = 0;
         for (String orderId : orderList) {
             Order order = getOrderById(orderId);
             if (order.getDeliveryTime() > maxTime)

@@ -77,12 +77,14 @@ public class OrderRepository {
 
     public void deleteOrderByOrderID(String orderId,String partnerId) {
         List<String> order=partnerOrderMap.get(partnerId);
+
         List<String> newOrder=new ArrayList<>();
         for(String or:order){
             if(!or.equals(orderId))
                 newOrder.add(or);
         }
         partnerOrderMap.put(partnerId,newOrder);
+        partnerMap.get(partnerId).setNumberOfOrders(newOrder.size());
     }
 
     public void deleteOrderByOrderID(String orderId) {
