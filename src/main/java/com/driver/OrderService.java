@@ -1,5 +1,6 @@
 package com.driver;
 
+import io.swagger.models.auth.In;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +36,8 @@ public class OrderService {
     }
 
     public Integer getOrderCountByPartnerId(String partnerId) {
-        DeliveryPartner partner = getPartnerById(partnerId);
-        return partner.getNumberOfOrders();
+        return orderRepository.getNoOfOrderByPartnerId(partnerId);
+
     }
 
     public List<String> getOrdersByPartnerId(String partnerId) {
@@ -56,8 +57,8 @@ public class OrderService {
 
         List<String> allOrder = getAllOrders();
         int assignedOrder = orderRepository.getNoOfAssignedOrder();
-
-        return allOrder.size() - assignedOrder;
+        Integer count=allOrder.size()-assignedOrder;
+        return allOrder.size()-assignedOrder;
     }
 
     public Integer countLeftOrder(String time, String partnerId) {

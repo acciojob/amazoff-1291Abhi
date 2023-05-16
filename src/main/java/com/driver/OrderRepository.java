@@ -96,4 +96,8 @@ public class OrderRepository {
     public void removeOrderFromOrderPartnerById(String orderId) {
         orderPartnerMap.remove(orderId);
     }
+
+    public Integer getNoOfOrderByPartnerId(String partnerId) {
+        return partnerOrderMap.get(partnerId).size();
+    }
 }
