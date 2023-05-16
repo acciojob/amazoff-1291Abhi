@@ -11,7 +11,9 @@ import java.util.Map;
 public class OrderRepository {
     private Map<String,Order> orderMap=new HashMap<>();
     private Map<String,DeliveryPartner> partnerMap=new HashMap<>();
-    private Map<String,List<String>> pairMap=new HashMap<>();
+    private Map<String,String> orderPartnerMap=new HashMap<>();
+    private Map<String,List<String>> partnerOrderMap=new HashMap<>();
+
     public void addOrder(Order order) {
         orderMap.put(order.getId(),order);
     }
@@ -21,14 +23,20 @@ public class OrderRepository {
     }
 
     public void addOrderPartnerPair(String orderId, String partnerId) {
-        if(pairMap.containsKey(partnerId)){
-            List<String> list=pairMap.get(partnerId);
-            list.add(orderId);
-            pairMap.put(partnerId,list);
-        }else{
-            List<String> list=new ArrayList<>();
-            list.add(orderId);
-            pairMap.put(partnerId,list);
+        if(orderMap.containsKey(orderId) && partnerMap.containsKey(partnerId)) {
+            orderPartnerMap.put(orderId, partnerId);
+            List<String> list = new ArrayList<>();
+            if(partnerOrderMap.containsKey(partnerId)) {
+                list = partnerOrderMap.get(partnerId);
+                list.add(orderId);
+                partnerOrderMap.put(partnerId, list);
+            } else {
+
+                list.add(orderId);
+                partnerOrderMap.put(partnerId, list);
+            }
+            DeliveryPartner deliveryPartner=new DeliveryPartner(partnerId);
+            deliveryPartner.setNumberOfOrders(list.size());
         }
     }
 
@@ -41,7 +49,7 @@ public class OrderRepository {
     }
 
     public List<String> getOrdersByPartnerId(String partnerId) {
-        return pairMap.get(partnerId);
+        return partnerOrderMap.get(partnerId);
     }
 
     public List<String> getAllOrderKey() {
@@ -53,28 +61,39 @@ public class OrderRepository {
 
     public List<String> getAllPartnerId() {
         List<String> key=new ArrayList<>();
-        for(String keys:pairMap.keySet())
+        for(String keys:partnerOrderMap.keySet())
             key.add(keys);
         return key;
     }
 
     public void deletePartnerByID(String partnerId) {
         partnerMap.remove(partnerId);
-        pairMap.remove(partnerId);
+        List<String> order=partnerOrderMap.get(partnerId);
+        partnerOrderMap.remove(partnerId);
+        for(String key:order)
+            orderPartnerMap.remove(key);
     }
 
 
     public void deleteOrderByOrderID(String orderId,String partnerId) {
-        List<String> order=pairMap.get(partnerId);
+        List<String> order=partnerOrderMap.get(partnerId);
         List<String> newOrder=new ArrayList<>();
         for(String or:order){
             if(!or.equals(orderId))
                 newOrder.add(or);
         }
-        pairMap.put(partnerId,newOrder);
+        partnerOrderMap.put(partnerId,newOrder);
     }
 
     public void deleteOrderByOrderID(String orderId) {
         orderMap.remove(orderId);
+    }
+
+    public int getNoOfAssignedOrder() {
+        return orderPartnerMap.size();
+    }
+
+    public void removeOrderFromOrderPartnerById(String orderId) {
+        orderPartnerMap.remove(orderId);
     }
 }

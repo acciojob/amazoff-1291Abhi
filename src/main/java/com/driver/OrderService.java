@@ -45,31 +45,29 @@ public class OrderService {
 
     public List<String> getAllOrders() {
         List<String> keys = orderRepository.getAllOrderKey();
-        List<String> allOrder = new ArrayList<>();
-        for (String key : keys) {
-            allOrder.add(getOrderById(key).getId());
-        }
-        return allOrder;
+//        List<String> allOrder = new ArrayList<>();
+//        for (String key : keys) {
+//            allOrder.add(getOrderById(key).getId());
+//        }
+        return keys;
     }
 
     public Integer countOfUnassignedOrder() {
-        int count = 0;
+
         List<String> allOrder = getAllOrders();
-        List<String> allPartnerId = orderRepository.getAllPartnerId();
-        List<String> assignedOrder = new ArrayList<>();
-        for (String key : allPartnerId) {
-            for (String order : getOrdersByPartnerId(key))
-                assignedOrder.add(order);
-        }
-        return allOrder.size() - assignedOrder.size();
+        int assignedOrder = orderRepository.getNoOfAssignedOrder();
+
+        return allOrder.size() - assignedOrder;
     }
 
     public Integer countLeftOrder(String time, String partnerId) {
+        String[] temp=time.split(":");
+        int t=Integer.parseInt(temp[0])*60+Integer.parseInt(temp[1]);
         int count = 0;
         List<String> orderList = getOrdersByPartnerId(partnerId);
         for (String orderId : orderList) {
             Order order = getOrderById(orderId);
-            if (Integer.parseInt(time) > order.getDeliveryTime())
+            if (t > order.getDeliveryTime())
                 count++;
         }
         return count;
@@ -83,7 +81,9 @@ public class OrderService {
             if (order.getDeliveryTime() > maxTime)
                 maxTime = order.getDeliveryTime();
         }
-        return maxTime + "";
+        int hh=maxTime/60;
+        int mm=maxTime%60;
+        return hh+":"+mm;
     }
 
     public void deletePartnerByID(String partnerId) {
@@ -92,6 +92,7 @@ public class OrderService {
 
     public void deleteOrderById(String orderId) {
         List<String> pairOrder=orderRepository.getAllPartnerId();
+        orderRepository.removeOrderFromOrderPartnerById(orderId);
         orderRepository.deleteOrderByOrderID(orderId);
         for(String partnerId:pairOrder){
             for(String order:orderRepository.getOrdersByPartnerId(partnerId))
